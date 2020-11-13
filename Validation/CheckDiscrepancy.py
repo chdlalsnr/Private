@@ -5,13 +5,13 @@ import sys
 
 def main(target, reference):
 
-	path1 = '/cms/ldap_home/chdlalsnr/Validation/Samples/' + target #Target->kBlack
+	path1 = '/cms/ldap_home/chdlalsnr/' + target #Target->kBlack
         path2 = '/cms/ldap_home/chdlalsnr/Validation/Samples/' + reference #Reference->kRed
 
         if (target == 'CMSSW_11_2_0_pre1' or target == 'CMSSW_11_2_0_pre2' or target == 'CMSSW_11_2_0_pre3'):
-                workflow1 = '/23211.0_TenMuExtendedE_0_200+TenMuExtendedE_0_200_pythia8_2026D49_GenSimHLBeamSpotFull+DigiFullTrigger_2026D49+RecoFullGlobal_2026D49+HARVESTFullGlobal_2026D49/'
+                workflow1 = '/src/23211.0_TenMuExtendedE_0_200+TenMuExtendedE_0_200_pythia8_2026D49_GenSimHLBeamSpotFull+DigiFullTrigger_2026D49+RecoFullGlobal_2026D49+HARVESTFullGlobal_2026D49/'
         else:
-                workflow1 = '/23211.0_TenMuExtendedE_0_200+2026D49+TenMuExtendedE_0_200_pythia8_GenSimHLBeamSpot+DigiTrigger+RecoGlobal+HARVESTGlobal/'
+                workflow1 = '/src/23211.0_TenMuExtendedE_0_200+2026D49+TenMuExtendedE_0_200_pythia8_GenSimHLBeamSpot+DigiTrigger+RecoGlobal+HARVESTGlobal/'
 
 	if (reference == 'CMSSW_11_2_0_pre1' or reference == 'CMSSW_11_2_0_pre2' or reference == 'CMSSW_11_2_0_pre3'):
                 workflow2 = '/23211.0_TenMuExtendedE_0_200+TenMuExtendedE_0_200_pythia8_2026D49_GenSimHLBeamSpotFull+DigiFullTrigger_2026D49+RecoFullGlobal_2026D49+HARVESTFullGlobal_2026D49/'
@@ -64,13 +64,14 @@ def main(target, reference):
 	hist_sh2 = TH1D("hist_sh2", "", 100, -50, 50)
 	for i in range(len(gem_sh2)): hist_sh2.Fill(gem_sh2[i])
 
+	crt_sh = 0.00001*hist_sh1.GetXaxis().GetBinCenter(hist_sh1.GetMaximumBin())
 	hist_sh = hist_sh1 - hist_sh2
 	bm_sh = hist_sh.GetMaximumBin()
 	mp_sh = hist_sh.GetXaxis().GetBinCenter(bm_sh)
-	if mp_sh != 0:
+	if mp_sh >= crt_sh:
 		print("*** Discrepancy occurred at SIMHIT step ***")
 		sys.exit(0)
-	elif mp_sh == 0:
+	elif mp_sh < crt_sh:
 		print("*** There is no discrepancy at SIMHIT step ***")
 
 #	# DIGI
@@ -92,13 +93,14 @@ def main(target, reference):
 	hist_rh2 = TH1D("hist_rh2", "", 100, -50, 50)
 	for i in range(len(gem_rh2)): hist_rh2.Fill(gem_rh2[i])
 
+	crt_rh = 0.00001*hist_rh1.GetXaxis().GetBinCenter(hist_rh1.GetMaximumBin())
 	hist_rh = hist_rh1 - hist_rh2
 	bm_rh = hist_rh.GetMaximumBin()
 	mp_rh = hist_rh.GetXaxis().GetBinCenter(bm_rh)
-	if mp_rh != 0:
+	if mp_rh >= crt_rh:
 		print("*** Discrepancy occurred at RECHIT step ***")
 		sys.exit(0)
-	elif mp_rh == 0:
+	elif mp_rh < crt_rh:
                 print("*** There is no discrepancy at RECHIT step ***")
 
 
